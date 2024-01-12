@@ -7,8 +7,8 @@ import (
 
 // UserRepository is an interface for managing users.
 type UserRepository interface {
-	Create(ctx context.Context, user *entity.User) error
-	Get(ctx context.Context, id string) (*entity.User, error)
-	Update(ctx context.Context, user *entity.User) error
-	Delete(ctx context.Context, id string) error
+	CreateUser(ctx context.Context, user *entity.User) error
+	GetUser(ctx context.Context, id string) (*entity.User, error)
+	UpdateUser(ctx context.Context, user *entity.User) error
+	DeleteUser(ctx context.Context, id string) error
 }
