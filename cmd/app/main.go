@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"github.com/Skillbox_30_2023_new/cmd/config"
 	"github.com/Skillbox_30_2023_new/internal/controller/httpserv"
 	"github.com/Skillbox_30_2023_new/internal/usecase"
 	"github.com/Skillbox_30_2023_new/internal/usecase/repo"
@@ -12,7 +14,14 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("sqlserver", "server=localhost;user id=sa;password=YourStrong@Password;port=1433;database=user_db")
+
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Config error: %s", err)
+	}
+
+	connMssql := fmt.Sprintf("server=localhost;user id=%s;password=%s;port=1433;database=user_db", cfg.MSSQL.User, cfg.MSSQL.Password)
+	db, err := sql.Open("sqlserver", connMssql)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,5 +41,6 @@ func main() {
 	r.Get("/friends/{id}", handler.GetFriends)
 	r.Put("/user/{id}/age", handler.UpdateAge)
 
-	log.Fatal(http.ListenAndServe(":8080", r))
+	port := cfg.HTTP.Port
+	log.Fatal(http.ListenAndServe(port, r))
 }
