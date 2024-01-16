@@ -9,6 +9,7 @@ import (
 	"github.com/Skillbox_30_2023_new/internal/usecase/repo"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	_ "github.com/microsoft/go-mssqldb"
 	"log"
 	"net/http"
 )
@@ -20,15 +21,16 @@ func main() {
 		log.Fatalf("Config error: %s", err)
 	}
 
-	connMssql := fmt.Sprintf("server=localhost;user id=%s;password=%s;port=1433;database=user_db", cfg.MSSQL.User, cfg.MSSQL.Password)
-	db, err := sql.Open("sqlserver", connMssql)
+	connMssql := fmt.Sprintf("server=localhost;user id=%s;password=%s;port=1433;database=%s", cfg.MSSQL.User, cfg.MSSQL.Password, cfg.MSSQL.DatabaseName)
+	db, err := sql.Open("mssql", connMssql)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.Close()
 
-	repo := repo.NewMSSQLUserRepository(db)
-	service := usecase.NewUserService(repo)
+	repoNew := repo.NewMSSQLUserRepository(db)
+	service := usecase.NewUserService(repoNew)
 	handler := httpserv.NewHTTPHandler(service)
 
 	r := chi.NewRouter()
@@ -42,5 +44,6 @@ func main() {
 	r.Put("/user/{id}/age", handler.UpdateAge)
 
 	port := cfg.HTTP.Port
+	port = ":" + port
 	log.Fatal(http.ListenAndServe(port, r))
 }

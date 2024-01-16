@@ -2,6 +2,7 @@ package httpserv
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/Skillbox_30_2023_new/internal/entity"
 	"github.com/go-chi/chi"
 	"net/http"
@@ -14,6 +15,7 @@ func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	fmt.Println(user.Age, user.ID, user.Name)
 	if err := h.Service.CreateUser(r.Context(), &user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

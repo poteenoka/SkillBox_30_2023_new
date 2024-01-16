@@ -15,9 +15,10 @@ type HTTP struct {
 }
 
 type MSSQL struct {
-	Instance string `yaml:"instance"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
+	Instance     string `yaml:"instance"`
+	User         string `yaml:"user"`
+	Password     string `yaml:"password"`
+	DatabaseName string `yaml:"databaseName"`
 }
 
 // NewConfig returns app config.

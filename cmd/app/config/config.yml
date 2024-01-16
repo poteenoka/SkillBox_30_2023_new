@@ -1,0 +1,8 @@
+http:
+  port: '8080'
+
+mssql:
+  instance: localhost
+  user: sb
+  password: 1234qwerQWER
+  databaseName: SkillBox

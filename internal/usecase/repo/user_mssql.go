@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/Skillbox_30_2023_new/internal/entity"
 	"github.com/google/uuid"
 )
@@ -20,8 +21,8 @@ func NewMSSQLUserRepository(db *sql.DB) *MSSQLUserRepository {
 // Create creates a new user in the repository.
 func (r *MSSQLUserRepository) CreateUser(ctx context.Context, user *entity.User) error {
 	user.ID = uuid.New().String()
-	_, err := r.db.Exec("INSERT INTO users (id, name, age) VALUES (@id, @name, @age)",
-		sql.Named("id", user.ID),
+	fmt.Println(user)
+	_, err := r.db.Exec("INSERT INTO users (name, age) VALUES ( @name, @age)",
 		sql.Named("name", user.Name),
 		sql.Named("age", user.Age),
 	)
