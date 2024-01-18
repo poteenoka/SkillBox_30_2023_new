@@ -23,6 +23,7 @@ func main() {
 
 	connMssql := fmt.Sprintf("server=localhost;user id=%s;password=%s;port=1433;database=%s", cfg.MSSQL.User, cfg.MSSQL.Password, cfg.MSSQL.DatabaseName)
 	db, err := sql.Open("mssql", connMssql)
+	err = db.Ping()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +37,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Post("/user", handler.CreateUser)
-	r.Get("/user/{id}", handler.GetUser)
+	r.Get("/user/{name}", handler.GetUser)
 	r.Put("/user/{id}", handler.UpdateUser)
 	r.Delete("/user", handler.DeleteUser)
 	r.Post("/make_friends", handler.MakeFriends)
