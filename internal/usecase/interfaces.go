@@ -10,9 +10,11 @@ type UserRepository interface {
 	GetUser(ctx context.Context, id string) (*entity.User, error)
 	UpdateUser(ctx context.Context, user *entity.User) error
 	DeleteUser(ctx context.Context, id string) error
+	MakeFriends(ctx context.Context, sourceID int, targetID int) error
+	GetFriends(ctx context.Context, id int) (*entity.Userfriends, error)
 }
 
-// бизнес логика, авторизации и прочие действия...
+// бизнес логика, авторизации и прочие действия ...
 type UseCase interface {
 	SignInuser(ctx context.Context, user *entity.User) error
 	signOut(ctx context.Context, user *entity.User) error

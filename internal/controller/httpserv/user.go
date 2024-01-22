@@ -5,9 +5,9 @@ import (
 	"github.com/Skillbox_30_2023_new/internal/entity"
 	"github.com/go-chi/chi"
 	"net/http"
+	"strconv"
 )
 
-// CreateUser creates a new user.
 func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user entity.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
@@ -23,7 +23,6 @@ func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// GetUser gets a user by their ID.
 func (h *HTTPHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	name := chi.URLParam(r, "name")
 	user, err := h.Service.GetUser(r.Context(), name)
@@ -34,7 +33,6 @@ func (h *HTTPHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// UpdateUser updates a user.
 func (h *HTTPHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	var user entity.User
@@ -50,7 +48,6 @@ func (h *HTTPHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// DeleteUser deletes a user.
 func (h *HTTPHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if err := h.Service.DeleteUser(r.Context(), id); err != nil {
@@ -61,11 +58,10 @@ func (h *HTTPHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "user deleted"})
 }
 
-// MakeFriends makes two users friends.
 func (h *HTTPHandler) MakeFriends(w http.ResponseWriter, r *http.Request) {
 	var req struct {
-		SourceID string `json:"source_id"`
-		TargetID string `json:"target_id"`
+		SourceID int `json:"source_id"`
+		TargetID int `json:"target_id"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -79,9 +75,9 @@ func (h *HTTPHandler) MakeFriends(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "users are now friends"})
 }
 
-// GetFriends gets all of a user's friends.
 func (h *HTTPHandler) GetFriends(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	idstr := chi.URLParam(r, "id")
+	id, _ := strconv.Atoi(idstr)
 	friends, err := h.Service.GetFriends(r.Context(), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -90,7 +86,6 @@ func (h *HTTPHandler) GetFriends(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(friends)
 }
 
-// UpdateAge updates a user's age.
 func (h *HTTPHandler) UpdateAge(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	var req struct {

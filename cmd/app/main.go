@@ -27,8 +27,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	defer db.Close()
+	//defer db.Close()
 
 	repoNew := repo.NewMSSQLUserRepository(db)
 	service := usecase.NewUserService(repoNew)
@@ -42,7 +41,7 @@ func main() {
 	r.Delete("/user", handler.DeleteUser)
 	r.Post("/make_friends", handler.MakeFriends)
 	r.Get("/friends/{id}", handler.GetFriends)
-	r.Put("/user/{id}/age", handler.UpdateAge)
+	r.Put("/user/age/{id}", handler.UpdateAge)
 
 	port := cfg.HTTP.Port
 	port = ":" + port
