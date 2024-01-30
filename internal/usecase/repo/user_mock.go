@@ -10,6 +10,12 @@ type MockUserRepository struct {
 	mock.Mock
 }
 
+//new(repo.MockUserRepository)
+
+func NewMockUserRepository() *MockUserRepository {
+	return new(MockUserRepository)
+}
+
 func (m *MockUserRepository) CreateUser(ctx context.Context, user *entity.User) error {
 	args := m.Called(ctx, user)
 	return args.Error(0)
@@ -39,3 +45,6 @@ func (m *MockUserRepository) GetFriends(ctx context.Context, id int) (*entity.Us
 	args := m.Called(ctx, id)
 	return args.Get(0).(*entity.Userfriends), args.Error(1)
 }
+
+/*
+ */

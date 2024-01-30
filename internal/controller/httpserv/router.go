@@ -7,14 +7,13 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
-	"net/http/httptest"
 )
 
 type HTTPHandler struct {
 	Service *usecase.UserService
 }
 
-func (h *HTTPHandler) ServeHTTP(rec *httptest.ResponseRecorder, req *http.Request) {
+func (h *HTTPHandler) ServeHTTP() {
 
 }
 
