@@ -7,11 +7,8 @@ import (
 	"github.com/Skillbox_30_2023_new/internal/controller/httpserv"
 	"github.com/Skillbox_30_2023_new/internal/usecase"
 	"github.com/Skillbox_30_2023_new/internal/usecase/repo"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
 	_ "github.com/microsoft/go-mssqldb"
 	"log"
-	"net/http"
 )
 
 func main() {
@@ -31,19 +28,5 @@ func main() {
 
 	repoNew := repo.NewMSSQLUserRepository(db)
 	service := usecase.NewUserService(repoNew)
-	handler := httpserv.NewHTTPHandler(service)
-
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Post("/user", handler.CreateUser)
-	r.Get("/user/{name}", handler.GetUser)
-	r.Put("/user/{id}", handler.UpdateUser)
-	r.Delete("/user", handler.DeleteUser)
-	r.Post("/make_friends", handler.MakeFriends)
-	r.Get("/friends/{id}", handler.GetFriends)
-	r.Put("/user/age/{id}", handler.UpdateAge)
-
-	port := cfg.HTTP.Port
-	port = ":" + port
-	log.Fatal(http.ListenAndServe(port, r))
+	httpserv.ServRun(service, cfg)
 }
