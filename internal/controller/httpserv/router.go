@@ -13,9 +13,10 @@ type HTTPHandler struct {
 	Service *usecase.UserService
 }
 
+/*
 func (h *HTTPHandler) ServeHTTP() {
 
-}
+}*/
 
 func NewHTTPHandler(service *usecase.UserService) *HTTPHandler {
 	return &HTTPHandler{
