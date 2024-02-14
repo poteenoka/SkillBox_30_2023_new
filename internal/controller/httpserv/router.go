@@ -13,10 +13,46 @@ type HTTPHandler struct {
 	Service *usecase.UserService
 }
 
-/*
-func (h *HTTPHandler) ServeHTTP() {
-
-}*/
+func (h *HTTPHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		switch r.URL.Path {
+		case "/user":
+			h.CreateUser(w, r)
+		case "/make_friends":
+			h.MakeFriends(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	case "GET":
+		switch r.URL.Path {
+		case "/user/{name}":
+			h.GetUser(w, r)
+		case "/friends/{id}":
+			h.GetFriends(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	case "PUT":
+		switch r.URL.Path {
+		case "/user/{id}":
+			h.UpdateUser(w, r)
+		case "/user/age/{id}":
+			h.UpdateAge(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	case "DELETE":
+		switch r.URL.Path {
+		case "/user":
+			h.DeleteUser(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	default:
+		http.NotFound(w, r)
+	}
+}
 
 func NewHTTPHandler(service *usecase.UserService) *HTTPHandler {
 	return &HTTPHandler{
@@ -29,6 +65,7 @@ func ServRun(service *usecase.UserService, cfg *config.Config) {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+
 	r.Post("/user", handler.CreateUser)
 	r.Get("/user/{name}", handler.GetUser)
 	r.Put("/user/{id}", handler.UpdateUser)

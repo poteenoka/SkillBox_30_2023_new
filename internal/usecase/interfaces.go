@@ -13,9 +13,3 @@ type UserRepository interface {
 	MakeFriends(ctx context.Context, sourceID int, targetID int) error
 	GetFriends(ctx context.Context, id int) (*entity.Userfriends, error)
 }
-
-// бизнес логика, авторизации и прочие действия ...
-type UseCase interface {
-	SignInuser(ctx context.Context, user *entity.User) error
-	signOut(ctx context.Context, user *entity.User) error
-}
