@@ -15,6 +15,7 @@ func TestUserLocalstorage_GetUser(t *testing.T) {
 		Name: "Иван Васильевич",
 		Age:  30,
 	}
+
 	err := storage.CreateUser(context.Background(), user)
 
 	assert.NoError(t, err)

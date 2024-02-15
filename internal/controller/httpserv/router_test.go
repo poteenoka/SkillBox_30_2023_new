@@ -23,9 +23,10 @@ func TestCreateUser(t *testing.T) {
 	mockRepo.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
 	service := usecase.NewUserService(mockRepo)
+
 	handler := NewHTTPHandler(service)
 
-	req, err := http.NewRequest("POST", "/user", bytes.NewBufferString(`{"name": "John Doe", "age": 30}`))
+	req, err := http.NewRequest("POST", "/user", bytes.NewBufferString(`{"name": "Ivan", "age": 88}`))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -46,44 +47,62 @@ func TestCreateUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, "John sD", user.Name)
+	assert.Equal(t, "Ivan", user.Name)
+	assert.Equal(t, 88, user.Age)
+
+	//fmt.Println("Get user")
+	//mockRepo.EXPECT().GetUser(gomock.Any(), "Ivan").Return(&entity.User{
+	//	Name: "Ivan2",
+	//	Age:  86,
+	//}, nil).AnyTimes()
+
+	req, err = http.NewRequest("GET", "/user/ivan", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rec = httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	// Read the HTTP response body.
+	body, err = ioutil.ReadAll(rec.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := json.Unmarshal(body, &user); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, "John Doe", user.Name)
 	assert.Equal(t, 30, user.Age)
 
 }
 
 /*
 func TestGetUser(t *testing.T) {
-	// Create a new mock user repository.
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := repo.NewMockUserRepository(ctrl)
 
-	// Set up the expected behavior of the mock repository.
-	mockRepo.EXPECT().GetUser(gomock.Any(), "John Doe").Return(&entity.User{
-		Name: "John Doe",
-		Age:  30,
+	mockRepo.EXPECT().GetUser(gomock.Any(), "Ivan").Return(&entity.User{
+		Name: "Ivan",
+		Age:  88,
 	}, nil).AnyTimes()
 
-	// Create a new user service.
 	service := usecase.NewUserService(mockRepo)
-
-	// Create a new HTTP handler.
 	handler := NewHTTPHandler(service)
 
-	// Create a new HTTP request.
-	req, err := http.NewRequest("GET", "/user/John Doe", nil)
+	req, err := http.NewRequest("GET", "/user/Ivan", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Create a new HTTP recorder.
 	rec := httptest.NewRecorder()
-
-	// Serve the HTTP request.
 	handler.ServeHTTP(rec, req)
-
-	// Check the HTTP status code.
 	assert.Equal(t, http.StatusOK, rec.Code)
 
 	// Read the HTTP response body.
@@ -92,21 +111,21 @@ func TestGetUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Unmarshal the HTTP response body into a user.
 	var user entity.User
+
 	if err := json.Unmarshal(body, &user); err != nil {
 		t.Fatal(err)
 	}
 
-	// Check the user's fields.
 	assert.Equal(t, "John Doe", user.Name)
 	assert.Equal(t, 30, user.Age)
 
 	// Assert that the mock repository was called with the correct arguments.
-	mockRepo.
-		mockRepo.AssertCalled(t, "GetUser", gomock.Any(), "John Doe")
+
+	//ctrl.AssertCalled(t, "GetUser", gomock.Any(), "John Doe")
 }
 
+/*
 func TestUpdateUser(t *testing.T) {
 	// Create a new mock user repository.
 	mockRepo := NewMockUserRepository(t)

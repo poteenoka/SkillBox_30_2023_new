@@ -15,7 +15,7 @@ func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("sdfdlskfdls:   ", user.Age, user.ID, user.Name)
+	fmt.Println("CreateUSer:   ", user.Age, user.ID, user.Name)
 	if err := h.Service.CreateUser(r.Context(), &user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -26,6 +26,7 @@ func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (h *HTTPHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	name := chi.URLParam(r, "name")
+	fmt.Println("Имя: ", name)
 	user, err := h.Service.GetUser(r.Context(), name)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
