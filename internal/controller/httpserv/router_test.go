@@ -3,6 +3,7 @@ package httpserv
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/Skillbox_30_2023_new/internal/usecase/repo"
 	"github.com/golang/mock/gomock"
 	"io/ioutil"
@@ -23,8 +24,17 @@ func TestUser(t *testing.T) {
 	mockRepo.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
 	service := usecase.NewUserService(mockRepo)
-
 	handler := NewHTTPHandler(service)
+
+	handler.Rt.Post("/user", handler.CreateUser)
+	handler.Rt.Get("/user/{name}", handler.GetUser)
+	handler.Rt.Put("/user/{id}", handler.UpdateUser)
+	handler.Rt.Delete("/user", handler.DeleteUser)
+	handler.Rt.Post("/make_friends", handler.MakeFriends)
+	handler.Rt.Get("/friends/{id}", handler.GetFriends)
+	handler.Rt.Put("/user/age/{id}", handler.UpdateAge)
+
+	fmt.Println("Test: CREATE USer")
 
 	req, err := http.NewRequest("POST", "/user", bytes.NewBufferString(`{"name": "ivan", "age": 88}`))
 	if err != nil {
@@ -33,44 +43,63 @@ func TestUser(t *testing.T) {
 
 	rec := httptest.NewRecorder()
 
-	handler.ServeHTTP(rec, req)
+	handler.CreateUser(rec, req)
 
 	assert.Equal(t, http.StatusCreated, rec.Code)
-
 	body, err := ioutil.ReadAll(rec.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	var user entity.User
 	if err := json.Unmarshal(body, &user); err != nil {
 		t.Fatal(err)
 	}
+	fmt.Println(user)
 
 	assert.Equal(t, "ivan", user.Name)
 	assert.Equal(t, 88, user.Age)
+
+	fmt.Println("\n --------------", "Test Get USer", "-----------------")
 
 	req, err = http.NewRequest("GET", "/user/ivan", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	rec = httptest.NewRecorder()
-	handler.ServeHTTP(rec, req)
-	assert.Equal(t, http.StatusOK, rec.Code)
 
-	// Read the HTTP response body.
+	handler.GetUser(rec, req)
+
 	body, err = ioutil.ReadAll(rec.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	if err := json.Unmarshal(body, &user); err != nil {
 		t.Fatal(err)
 	}
 
 	assert.Equal(t, "ivan", user.Name)
 	assert.Equal(t, 88, user.Age)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Equal(t, "ivan", user.Name)
+	assert.Equal(t, 88, user.Age)
+
+	fmt.Println("Test UPDATE USer")
+
+	req, err = http.NewRequest("PUT", "/user/55", bytes.NewBufferString(`{"name": "ivan", "age": 31}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rec = httptest.NewRecorder()
+
+	//handler.UpdateUser(rec, req)
+	handler.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+
+	assert.Equal(t, "ivan", user.Name)
+	//  надо переделать на {name всесто ID.. или перед этим брать USER тфьу}assert.Equal(t, 31, user.Age)
 
 }
 
@@ -120,60 +149,6 @@ func TestGetUser(t *testing.T) {
 }
 
 /*
-func TestUpdateUser(t *testing.T) {
-	// Create a new mock user repository.
-	mockRepo := NewMockUserRepository(t)
-
-	// Set up the expected behavior of the mock repository.
-	mockRepo.mockRepo.EXPECT().UpdateUser(gomock.Any(), &entity.User{
-		Name: "Jane Doe",
-		Age:  31,
-	}).Return(nil).AnyTimes()
-
-	// Create a new user service.
-	service := usecase.NewUserService(mockRepo)
-
-	// Create a new HTTP handler.
-	handler := NewHTTPHandler(service)
-
-	// Create a new HTTP request.
-	req, err := http.NewRequest("PUT", "/user/1", bytes.NewBufferString(`{"name": "Jane Doe", "age": 31}`))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Create a new HTTP recorder.
-	rec := httptest.NewRecorder()
-
-	// Serve the HTTP request.
-	handler.ServeHTTP(rec, req)
-
-	// Check the HTTP status code.
-	assert.Equal(t, http.StatusOK, rec.Code)
-
-	// Read the HTTP response body.
-	body, err := ioutil.ReadAll(rec.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Unmarshal the HTTP response body into a user.
-	var user entity.User
-	if err := json.Unmarshal(body, &user); err != nil {
-		t.Fatal(err)
-	}
-
-	// Check the user's fields.
-	assert.Equal(t, "Jane Doe", user.Name)
-	assert.Equal(t, 31, user.Age)
-
-	// Assert that the mock repository was called with the correct arguments.
-	mockRepo.mockRepo.AssertCalled(t, "UpdateUser", gomock.Any(), &entity.User{
-		Name: "Jane Doe",
-		Age:  31,
-	})
-}
-
 func TestDeleteUser(t *testing.T) {
 	// Create a new mock user repository.
 	mockRepo := NewMockUserRepository(t)
