@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateUser(t *testing.T) {
+func TestUser(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -26,7 +26,7 @@ func TestCreateUser(t *testing.T) {
 
 	handler := NewHTTPHandler(service)
 
-	req, err := http.NewRequest("POST", "/user", bytes.NewBufferString(`{"name": "Ivan", "age": 88}`))
+	req, err := http.NewRequest("POST", "/user", bytes.NewBufferString(`{"name": "ivan", "age": 88}`))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -47,14 +47,8 @@ func TestCreateUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, "Ivan", user.Name)
+	assert.Equal(t, "ivan", user.Name)
 	assert.Equal(t, 88, user.Age)
-
-	//fmt.Println("Get user")
-	//mockRepo.EXPECT().GetUser(gomock.Any(), "Ivan").Return(&entity.User{
-	//	Name: "Ivan2",
-	//	Age:  86,
-	//}, nil).AnyTimes()
 
 	req, err = http.NewRequest("GET", "/user/ivan", nil)
 	if err != nil {
@@ -75,8 +69,8 @@ func TestCreateUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, "John Doe", user.Name)
-	assert.Equal(t, 30, user.Age)
+	assert.Equal(t, "ivan", user.Name)
+	assert.Equal(t, 88, user.Age)
 
 }
 

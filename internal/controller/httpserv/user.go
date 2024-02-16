@@ -26,6 +26,7 @@ func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (h *HTTPHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	name := chi.URLParam(r, "name")
+	//name := chi.URLParamFromCtx(r, "name")
 	fmt.Println("Имя: ", name)
 	user, err := h.Service.GetUser(r.Context(), name)
 	if err != nil {

@@ -34,11 +34,13 @@ func (h *HTTPHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		switch cmd := r.URL.Path; {
 		case routeUSer.MatchString(cmd):
+			fmt.Println("Берем пользователя")
 			h.GetUser(w, r)
 		case routeFriend.MatchString(cmd):
 			h.GetFriends(w, r)
 		default:
 			http.NotFound(w, r)
+
 		}
 	case "PUT":
 		switch r.URL.Path {
