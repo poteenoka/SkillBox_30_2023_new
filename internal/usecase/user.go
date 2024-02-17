@@ -19,8 +19,8 @@ func (s *UserService) CreateUser(ctx context.Context, user *entity.User) error {
 	return s.repo.CreateUser(ctx, user)
 }
 
-func (s *UserService) GetUser(ctx context.Context, id string) (*entity.User, error) {
-	return s.repo.GetUser(ctx, id)
+func (s *UserService) GetUser(ctx context.Context, name string) (*entity.User, error) {
+	return s.repo.GetUser(ctx, name)
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, user *entity.User) error {

@@ -14,35 +14,33 @@ import (
 
 type HTTPHandler struct {
 	Service *usecase.UserService
-	Rt      *chi.Mux
 }
 
-func (*HTTPHandler) ServeHTTP(http.ResponseWriter, *http.Request) {
-
-}
+//func (*HTTPHandler) ServeHTTP(http.ResponseWriter, *http.Request) {
+//
+//}
 
 func NewHTTPHandler(service *usecase.UserService) *HTTPHandler {
 	return &HTTPHandler{
 		Service: service,
-		Rt:      chi.NewRouter(),
 	}
 }
 
 func ServRun(service *usecase.UserService, cfg *config.Config) {
 	handler := NewHTTPHandler(service)
-	//	r := chi.NewRouter()
+	r := chi.NewRouter()
 
-	handler.Rt.Post("/user", handler.CreateUser)
-	handler.Rt.Get("/user/{name}", handler.GetUser)
-	handler.Rt.Put("/user/{id}", handler.UpdateUser)
-	handler.Rt.Delete("/user", handler.DeleteUser)
-	handler.Rt.Post("/make_friends", handler.MakeFriends)
-	handler.Rt.Get("/friends/{id}", handler.GetFriends)
-	handler.Rt.Put("/user/age/{id}", handler.UpdateAge)
+	r.Post("/user", handler.CreateUser)
+	r.Get("/user/{name}", handler.GetUser)
+	r.Put("/user/{id}", handler.UpdateUser)
+	r.Delete("/user", handler.DeleteUser)
+	r.Post("/make_friends", handler.MakeFriends)
+	r.Get("/friends/{id}", handler.GetFriends)
+	r.Put("/user/age/{id}", handler.UpdateAge)
 
 	port := cfg.HTTP.Port
 	port = ":" + port
-	log.Fatal(http.ListenAndServe(port, handler.Rt))
+	log.Fatal(http.ListenAndServe(port, r))
 }
 
 func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +59,6 @@ func (h *HTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *HTTPHandler) GetUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r)
 	name := chi.URLParam(r, "name")
 	fmt.Println("Имя: ", name)
 	user, err := h.Service.GetUser(r.Context(), name)

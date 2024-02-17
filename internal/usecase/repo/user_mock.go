@@ -68,6 +68,7 @@ func (m *MockUserRepository) GetFriends(ctx context.Context, id int) (*entity.Us
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetFriends", ctx, id)
 	ret0, _ := ret[0].(*entity.Userfriends)
+
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -85,6 +86,7 @@ func (m *MockUserRepository) GetUser(ctx context.Context, id string) (*entity.Us
 	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
+
 }
 
 // GetUser indicates an expected call of GetUser.
